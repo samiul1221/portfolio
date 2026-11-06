@@ -139,7 +139,7 @@
     const keep = li => !rank || rank.includes(idOf(li));
     items.forEach(li => setVisible(li, keep(li), instant));
     const n = items.filter(keep).length;
-    const dl = `<a href="${D.resume[rank ? k : 'systems']}" download>Download the resume</a>`;
+    const dl = `<a href="${D.resume[rank ? k : 'systems']}" data-resume>View the resume</a>`;
     result.innerHTML = rank ? `Showing ${n} of ${D.total} projects for ${D.label[k]}. ${dl}` : `All ${D.total} projects, from cloud to silicon. ${dl}`;
     $$('[data-resume]').forEach(a => { a.href = D.resume[rank ? k : 'systems']; });
     $(`#r-${rank ? k : 'all'}`).checked = true;
@@ -193,6 +193,19 @@
     mailStatus.textContent = ok ? 'The address was copied.' : 'Copying was blocked. The address is selected: press Ctrl+C.';
   });
   mail.addEventListener('click', e => { if (e.target === mail || e.target.matches('[data-close]')) mail.close(); });
+
+  // resume reader: the browser's own PDF viewer in a box; where it can't show PDFs (most phones) the link just opens the file
+  const reader = $('#reader'), frame = $('iframe', reader);
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[data-resume]');
+    if (!a || !navigator.pdfViewerEnabled) return;
+    e.preventDefault();
+    frame.src = a.getAttribute('href') + '#toolbar=0&navpanes=0&view=FitH';
+    $$('[data-reader-dl],[data-reader-tab]', reader).forEach(x => { x.href = a.getAttribute('href'); });
+    reader.showModal();
+  });
+  reader.addEventListener('click', e => { if (e.target === reader || e.target.matches('[data-close]')) reader.close(); });
+  reader.addEventListener('close', () => { frame.removeAttribute('src'); });
 
   // footer links to a group: apply the filter, then go to the list
   document.addEventListener('click', e => {
