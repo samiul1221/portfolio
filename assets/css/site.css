@@ -328,15 +328,18 @@ section.tools { padding-block: var(--section-gap) var(--section-gap-s); }
 .mail-actions { display: grid; gap: var(--space-xs); margin: var(--space-xs) 0 0; }
 .mail-close { justify-self: start; }
 
-/* the resume reader: fit to width, scrolls like a normal document */
-.reader { --bar: 3.75rem; width: min(96vw, 72rem); height: 97svh; max-height: 97svh; padding: 0; border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); background: var(--color-paper-2); overflow: hidden; }
+/* the resume reader: full screen, the page in a wide centred column, scrolls like a normal document */
+.reader { width: 100vw; height: 100svh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; border-radius: 0; background: var(--color-paper-2); overflow: hidden; }
 .reader[open] { display: flex; flex-direction: column; }
 .reader::backdrop { background: color-mix(in oklab, var(--color-paper) 86%, transparent); }
-.reader-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); min-height: var(--bar); padding: 0 var(--space-md); }
-.reader-title { margin: 0; font-family: var(--font-display); font-size: var(--text-lg); white-space: nowrap; }
+.reader-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-xs) var(--space-md); padding: var(--space-sm) var(--space-md); }
+.reader-tabs { display: flex; gap: 0.25rem; }
+.reader-tab[aria-pressed="true"] { background: var(--color-ink); color: var(--color-paper); }
+.reader-left { display: grid; gap: 0.125rem; }
+.reader-meta { margin: 0; padding-left: var(--space-sm); font-size: var(--text-xs); opacity: .7; }
 .reader-actions { display: flex; gap: var(--space-xs); align-items: center; }
-.reader-frame { flex: 1; width: 100%; border: 0; background: #fff; }
-@media (max-width: 40rem) { .reader-title, [data-reader-tab] { display: none; } .reader-bar { justify-content: flex-end; } }
+.reader-frame { flex: 1; width: min(100%, 1400px); align-self: center; border: 0; background: #fff; }
+@media (max-width: 48rem) { .reader-meta, .reader-opt { display: none; } }
 
 /* the finder and the viewer */
 dialog { color: var(--color-ink); }
@@ -386,3 +389,6 @@ dialog { color: var(--color-ink); }
 @media (max-width: 40rem) { .seg label { min-height: 48px; padding: 0 var(--space-md); font-size: var(--text-sm); } .arrow { width: 40px; height: 40px; } .strip button { width: 64px; } }
 @media (max-width: 60rem) { .marquee { --cols: 3; } }
 @media (max-width: 40rem) { .marquee { --cols: 2; } }
+
+/* one scrollbar: the page behind an open dialog does not scroll */
+html:has(dialog[open]) { overflow: hidden; }

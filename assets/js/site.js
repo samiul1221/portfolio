@@ -167,7 +167,7 @@
     go(a.getAttribute('href').slice(1));
   });
 
-  const want = new URLSearchParams(location.search).get('for');
+  const want = new URLSearchParams(location.search).get('for'), wantResume = new URLSearchParams(location.search).get('resume');
   applyRole(want && D.rank[want] ? want : 'all', true);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => placeMarker(true));
   if (location.hash && items.some(li => idOf(li) === location.hash.slice(1))) setTimeout(() => go(location.hash.slice(1)), 0);
@@ -194,18 +194,46 @@
   });
   mail.addEventListener('click', e => { if (e.target === mail || e.target.matches('[data-close]')) mail.close(); });
 
-  // resume reader: the browser's own PDF viewer in a box; where it can't show PDFs (most phones) the link just opens the file
-  const reader = $('#reader'), frame = $('iframe', reader);
+  // resume reader: the browser's own PDF viewer in a box, with tabs per resume, print, a shareable ?resume= link and keys D, P.
+  // Where the browser can't show PDFs (most phones) the links just open the file.
+  const reader = $('#reader'), meta = $('#reader-meta'), dlBtn = $('[data-reader-dl]', reader);
+  let frame = $('iframe', reader), cur = 'systems';
+  const keyOf = href => Object.keys(D.resume).find(k => D.resume[k] === href);
+  function showReader() {
+    $$('[data-reader-role]', reader).forEach(b => b.setAttribute('aria-pressed', b.dataset.readerRole === cur));
+    dlBtn.href = D.resume[cur];
+    meta.textContent = (D.updated[cur] ? `Updated ${D.updated[cur]}. ` : '') + 'One page.';
+    const f = document.createElement('iframe'); // a new frame each time so the PDF reloads cleanly
+    f.className = 'reader-frame'; f.title = 'Resume, PDF';
+    f.src = D.resume[cur] + '#toolbar=0&navpanes=0&view=FitH';
+    frame.replaceWith(f); frame = f;
+    history.replaceState(null, '', `?resume=${cur}`);
+  }
+  function openReader(k) { cur = k; if (!reader.open) reader.showModal(); showReader(); }
   document.addEventListener('click', e => {
     const a = e.target.closest('a[data-resume]');
     if (!a || !navigator.pdfViewerEnabled) return;
     e.preventDefault();
-    frame.src = a.getAttribute('href') + '#toolbar=0&navpanes=0&view=FitH';
-    $$('[data-reader-dl],[data-reader-tab]', reader).forEach(x => { x.href = a.getAttribute('href'); });
-    reader.showModal();
+    openReader(keyOf(a.getAttribute('href')) || 'systems');
   });
-  reader.addEventListener('click', e => { if (e.target === reader || e.target.matches('[data-close]')) reader.close(); });
-  reader.addEventListener('close', () => { frame.removeAttribute('src'); });
+  function printIt() { try { frame.contentWindow.focus(); frame.contentWindow.print(); } catch (_) { open(D.resume[cur], '_blank'); } }
+  reader.addEventListener('click', e => {
+    const t = e.target;
+    if (t === reader || t.matches('[data-close]')) reader.close();
+    else if (t.matches('[data-reader-role]')) { cur = t.dataset.readerRole; showReader(); }
+    else if (t.matches('[data-reader-print]')) printIt();
+  });
+  reader.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (k === 'd') dlBtn.click(); else if (k === 'p') printIt();
+  });
+  reader.addEventListener('close', () => {
+    frame.removeAttribute('src');
+    const r = $('input[name="role"]:checked').value;
+    history.replaceState(null, '', r === 'all' ? location.pathname : `?for=${r}`);
+  });
+  if (wantResume && D.resume[wantResume] && navigator.pdfViewerEnabled) openReader(wantResume);
 
   // footer links to a group: apply the filter, then go to the list
   document.addEventListener('click', e => {

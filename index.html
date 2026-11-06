@@ -295,10 +295,13 @@
 </dialog>
 <dialog id="reader" class="reader" aria-label="Resume">
   <div class="reader-bar">
-    <p class="reader-title">Resume</p>
+    <div class="reader-left">
+      <div class="reader-tabs" role="group" aria-label="Which resume"><button class="btn btn--quiet reader-tab" type="button" data-reader-role="software" aria-pressed="false">Software and AI</button><button class="btn btn--quiet reader-tab" type="button" data-reader-role="systems" aria-pressed="false">System software</button></div>
+      <p class="reader-meta" id="reader-meta" aria-live="polite"></p>
+    </div>
     <span class="reader-actions">
-      <a class="btn btn--primary" href="assets/resume/Samiul_Seikh_System_Software.pdf" download data-reader-dl>Download PDF</a>
-      <a class="btn btn--ghost" href="assets/resume/Samiul_Seikh_System_Software.pdf" target="_blank" rel="noopener" data-reader-tab>Open in a tab</a>
+      <button class="btn btn--quiet reader-opt" type="button" data-reader-print>Print</button>
+      <a class="btn btn--primary" href="assets/resume/Samiul_Seikh_System_Software.pdf" download autofocus data-reader-dl>Download PDF</a>
       <button class="btn btn--quiet" type="button" data-close>Close</button>
     </span>
   </div>
@@ -306,7 +309,7 @@
 </dialog>
 <dialog id="lb" class="viewer" aria-label="Image viewer"><button type="button" class="btn btn--ghost" data-close>Close</button></dialog>
 
-<script type="application/json" id="role-data">{"rank": {"software": ["synkitab", "aqi-forecasting", "traffic-inspector", "detailtrust-net", "dehazing", "tablemind", "sign-vocalizer"], "systems": ["iot-home-automation", "tablemind", "ti-range", "sign-vocalizer", "smart-cane", "small-builds", "gesture-bot", "quadcopter"]}, "resume": {"software": "assets/resume/Samiul_Seikh_SDE.pdf", "systems": "assets/resume/Samiul_Seikh_System_Software.pdf"}, "label": {"software": "Software and AI", "systems": "System software"}, "total": 13}</script>
+<script type="application/json" id="role-data">{"rank": {"software": ["synkitab", "aqi-forecasting", "traffic-inspector", "detailtrust-net", "dehazing", "tablemind", "sign-vocalizer"], "systems": ["iot-home-automation", "tablemind", "ti-range", "sign-vocalizer", "smart-cane", "small-builds", "gesture-bot", "quadcopter"]}, "resume": {"software": "assets/resume/Samiul_Seikh_SDE.pdf", "systems": "assets/resume/Samiul_Seikh_System_Software.pdf"}, "label": {"software": "Software and AI", "systems": "System software"}, "updated": {"software": "1 Nov 2026", "systems": "1 Nov 2026"}, "total": 13}</script>
 <script src="assets/js/site.js" defer></script>
 </body>
 </html>
